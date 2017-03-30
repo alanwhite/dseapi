@@ -1,0 +1,36 @@
+service: dseapi
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+plugins:
+  - serverless-secrets-plugin
+
+provider:
+  name: aws
+  runtime: nodejs4.3
+  stage: dev
+  environment:
+    ACCOUNT_DOMAIN: ${self:service}-${opt:stage, self:provider.stage}-accounts
+  region: eu-west-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - 'sdb:GetAttributes'
+      Resource: "arn:aws:sdb:${self:provider.region}:*:domain/${self:provider.environment.ACCOUNT_DOMAIN}"
+
+custom:
+  secrets: ${file(secrets.${opt:stage, self:provider.stage}.yml)}
+
+functions:
+  get:
+    handler: licenses/get.get
+    environment:
+      AUTH0_CLIENT_ID: ${self:custom.secrets.AUTH0_CLIENT_ID}
+      AUTH0_CLIENT_SECRET: ${self:custom.secrets.AUTH0_CLIENT_SECRET}
+      AUTH0_ISSUER : ${self:custom.secrets.AUTH0_ISSUER}
+      DOMAIN_NAME : ${self:provider.environment.ACCOUNT_DOMAIN}
+    events:
+      - http:
+          path: licenses/{id}
+          method: get
+          cors: true

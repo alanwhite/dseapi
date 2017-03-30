@@ -1,0 +1,15 @@
+{
+  "name": "dseapi",
+  "version": "1.0.0",
+  "description": "",
+  "main": "licenses/get.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^7.3.0",
+    "serverless-secrets-plugin": "0.0.1"
+  }
+}
