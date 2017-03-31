@@ -1,5 +1,9 @@
 service: dseapi
 
+package:
+  exclude:
+    - node_modules/aws-sdk/**
+
 frameworkVersion: ">=1.1.0 <2.0.0"
 
 plugins:
@@ -7,7 +11,7 @@ plugins:
 
 provider:
   name: aws
-  runtime: nodejs4.3
+  runtime: nodejs6.10
   stage: dev
   environment:
     ACCOUNT_DOMAIN: ${self:service}-${opt:stage, self:provider.stage}-accounts
@@ -23,7 +27,7 @@ custom:
 
 functions:
   get:
-    handler: licenses/get.get
+    handler: functions/aws/licenses/get.get
     environment:
       AUTH0_CLIENT_ID: ${self:custom.secrets.AUTH0_CLIENT_ID}
       AUTH0_CLIENT_SECRET: ${self:custom.secrets.AUTH0_CLIENT_SECRET}
