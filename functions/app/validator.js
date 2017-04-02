@@ -1,13 +1,12 @@
 // helper class to validate JSON Web Tokens for DSE API
 
-class Validator {
+const JWT = require('jsonwebtoken');
 
-  constructor(JWTUtil, clientID, secret, issuer) {
-    this.JWTUtil = JWTUtil;
-    this.clientID = clientID;
-    this.secret = secret;
-    this.issuer = issuer;
-  }
+const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID;
+const AUTH0_CLIENT_SECRET = process.env.AUTH0_CLIENT_SECRET;
+const AUTH0_ISSUER = process.env.AUTH0_ISSUER;
+
+class Validator {
 
   // checks the user that Auth0 embeds in a JWT matches the user supplied as parameter
   forUser(jwt, user, callback) {
@@ -30,11 +29,11 @@ class Validator {
   // performs validation of the JSON Web Token and returns it decoded if successful
   token(jwt, callback) {
     const options = {
-      audience: this.clientID,
-      issuer: this.issuer,
+      audience: AUTH0_CLIENT_ID,
+      issuer: AUTH0_ISSUER,
     };
 
-    this.JWTUtil.verify(jwt, this.secret, options, (err, decoded) => {
+    JWT.verify(jwt, AUTH0_CLIENT_SECRET, options, (err, decoded) => {
       if (err) {
         console.log('Validator.token: error in jwt '+err);
         return callback(err);

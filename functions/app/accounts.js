@@ -14,9 +14,7 @@ class Accounts {
     var params = {
       DomainName: DOMAIN_NAME,
       ItemName: account,
-      AttributeNames: [
-        'lic'
-      ],
+      AttributeNames: ['lic'],
       ConsistentRead: false
     };
 
