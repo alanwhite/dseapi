@@ -11,7 +11,7 @@ class Validator {
 
   // checks the user that Auth0 embeds in a JWT matches the user supplied as parameter
   forUser(jwt, user, callback) {
-    token(jwt, (err,decoded) => {
+    this.token(jwt, (err,decoded) => {
       if (err) {
         console.log('Validator.forUser: bad jwt supplied');
         return callback(err);

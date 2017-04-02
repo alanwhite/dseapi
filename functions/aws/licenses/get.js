@@ -5,7 +5,8 @@
 
 const JWT = require('jsonwebtoken');
 const AWS = require('aws-sdk');
-const VALIDATE = require('/var/task/functions/app/validator.js');
+const VALIDATE = require('../../app/validator.js');
+const ACCOUNTMOD = require('../../app/accounts.js');
 var fs = require('fs');
 
 const AUTH0_CLIENT_ID = process.env.AUTH0_CLIENT_ID;
@@ -17,6 +18,7 @@ const DOMAIN_NAME = process.env.DOMAIN_NAME;
 const simpledb = new AWS.SimpleDB();
 
 const validateRequest = new VALIDATE(JWT, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_ISSUER);
+const accounts = new ACCOUNTMOD();
 
 module.exports.get = (event, context, callback) => {
 
@@ -29,22 +31,13 @@ module.exports.get = (event, context, callback) => {
   // if not
 
   // desired outcome template
-  console.log(process.cwd());
-  fs.readdir('/var/task/functions', function(err, items) {
-      console.log(items);
-
-      for (var i=0; i<items.length; i++) {
-          console.log(items[i]);
-      }
-
-
   const response = {
     statusCode: 200,
     headers: {
        "Access-Control-Allow-Origin" : "*"
     },
     body: JSON.stringify({
-      message: 'You are a logged in user so you can see this',
+      message: '',
       input: event,
     }),
   };
@@ -64,32 +57,46 @@ module.exports.get = (event, context, callback) => {
         return callback(null, response);
       } else {
 
-        // go get it
-        var params = {
-          DomainName: DOMAIN_NAME,
-          ItemName: event.pathParameters.id,
-          AttributeNames: [
-            'lic'
-          ],
-          ConsistentRead: false
-        };
-
-        simpledb.getAttributes(params, function(err, data) {
+        accounts.getLicensesForAccount(event.pathParameters.id, (err, data) => {
           if (err) {
-            console.log(err, err.stack); // an error occurred
-
             response.statusCode = 500;
             response.body = JSON.stringify({
-              message: 'Unable to retrieve from datastore',
+              message: err,
               input: event,
-            });
-            return callback(null, response);
+            })
+            return callback(null,response);
           } else {
-            console.log(data);           // successful response
-            response.body = JSON.stringify(data);
-            return callback(null, response);
+            response.body = data;
+            return callback(null,response);
           }
         });
+
+        // // go get it
+        // var params = {
+        //   DomainName: DOMAIN_NAME,
+        //   ItemName: event.pathParameters.id,
+        //   AttributeNames: [
+        //     'lic'
+        //   ],
+        //   ConsistentRead: false
+        // };
+        //
+        // simpledb.getAttributes(params, function(err, data) {
+        //   if (err) {
+        //     console.log(err, err.stack); // an error occurred
+        //
+        //     response.statusCode = 500;
+        //     response.body = JSON.stringify({
+        //       message: 'Unable to retrieve from datastore',
+        //       input: event,
+        //     });
+        //     return callback(null, response);
+        //   } else {
+        //     console.log(data);           // successful response
+        //     response.body = JSON.stringify(data);
+        //     return callback(null, response);
+        //   }
+        // });
       }
     });
 
@@ -102,5 +109,5 @@ module.exports.get = (event, context, callback) => {
 
     return callback(null, response);
   }
-  });
+
 };
