@@ -10,6 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "jsonwebtoken": "^7.3.0",
+    "require": "^2.4.20",
     "serverless-secrets-plugin": "0.0.1"
   }
 }

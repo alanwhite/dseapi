@@ -38,3 +38,12 @@ functions:
           path: licenses/{id}
           method: get
           cors: true
+  ipn:
+    handler: functions/aws/payments/post.post
+    environment:
+      DOMAIN_NAME : ${self:provider.environment.ACCOUNT_DOMAIN}
+    events:
+      - http:
+          path: payments/paypal
+          method: post
+          cors: true
