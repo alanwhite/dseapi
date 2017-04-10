@@ -31,13 +31,39 @@ class Accounts {
         }
 
         for (var i in data.Attributes) {
-          var license = { token: "" }
+          var license = { txn: "", token: "" }
           license.token = data.Attributes[i].Value;
           payload.licenses.push(license);
         }
+        
         console.log(payload);
 
         return callback(null, JSON.stringify(payload));
+      }
+    });
+
+  }
+
+  addLicenseToAccount(account, license, callback) {
+
+    var params = {
+      DomainName: DOMAIN_NAME,
+      ItemName: account,
+      Attributes: [
+        {
+          Name: 'lic',
+          Value: license, /* required */
+          Replace: false
+        }]
+    };
+
+    this.simpledb.putAttributes(params, function(err, data) {
+      if (err) {
+        console.log(err, err.stack);
+        return callback(err);
+      } else {
+        console.log(data);
+        return callback(null, JSON.stringify(data));
       }
     });
 

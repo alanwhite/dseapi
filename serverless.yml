@@ -15,12 +15,19 @@ provider:
   stage: dev
   environment:
     ACCOUNT_DOMAIN: ${self:service}-${opt:stage, self:provider.stage}-accounts
+    PAYMENT_LOG: ${self:service}-${opt:stage, self:provider.stage}-payments
   region: eu-west-1
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - 'sdb:GetAttributes'
+        - 'sdb:PutAttributes'
       Resource: "arn:aws:sdb:${self:provider.region}:*:domain/${self:provider.environment.ACCOUNT_DOMAIN}"
+    - Effect: "Allow"
+      Action:
+        - 'sdb:GetAttributes'
+        - 'sdb:PutAttributes'
+      Resource: "arn:aws:sdb:${self:provider.region}:*:domain/${self:provider.environment.PAYMENT_LOG}"
 
 custom:
   secrets: ${file(secrets.${opt:stage, self:provider.stage}.yml)}
@@ -28,6 +35,7 @@ custom:
 functions:
   get:
     handler: functions/aws/licenses/get.get
+    memorySize: 128
     environment:
       AUTH0_CLIENT_ID: ${self:custom.secrets.AUTH0_CLIENT_ID}
       AUTH0_CLIENT_SECRET: ${self:custom.secrets.AUTH0_CLIENT_SECRET}
@@ -40,8 +48,10 @@ functions:
           cors: true
   ipn:
     handler: functions/aws/payments/post.post
+    memorySize: 128
     environment:
       DOMAIN_NAME : ${self:provider.environment.ACCOUNT_DOMAIN}
+      PAYMENT_LOG : ${self:provider.environment.PAYMENT_LOG}
     events:
       - http:
           path: payments/paypal

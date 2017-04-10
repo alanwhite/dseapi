@@ -1,13 +1,10 @@
 'use strict';
 
-// This strikes me as a really poor way to structure logic so please
-// any node.js gurus out there please help me out!
+const qs = require('qs');
+const request = require('request');
+const paymentMOD = require('../../app/payments.js');
 
-const VALIDATE = require('../../app/validator.js');
-const ACCOUNTMOD = require('../../app/accounts.js');
-
-const validateRequest = new VALIDATE();
-const accounts = new ACCOUNTMOD();
+const payments = new paymentMOD();
 
 module.exports.post = (event, context, callback) => {
 
@@ -44,6 +41,16 @@ module.exports.post = (event, context, callback) => {
 
               //The IPN is verified
               console.log('Verified IPN!');
+
+              payments.processVerifiedIPN(event.body, function callback(err, data) {
+                  if (err) {
+                    console.log("error processing validated IPN");
+                  } else {
+                    console.log("IPN processing completed successfully");
+                  }
+              });
+
+
           } else if (body.substring(0, 7) === 'INVALID') {
 
               //The IPN invalid
@@ -60,5 +67,6 @@ module.exports.post = (event, context, callback) => {
       }
 
   });
+
 
 };
