@@ -52,6 +52,8 @@ functions:
     environment:
       DOMAIN_NAME : ${self:provider.environment.ACCOUNT_DOMAIN}
       PAYMENT_LOG : ${self:provider.environment.PAYMENT_LOG}
+      LICENSE_KEY : ${self:custom.secrets.LICENSE_KEY}
+      LICENSE_SALT : ${self:custom.secrets.LICENSE_SALT}
     events:
       - http:
           path: payments/paypal

@@ -3,6 +3,9 @@ const AWS = require('aws-sdk');
 
 const qs = require('qs');
 
+const LICMOD = require('./licenses.js');
+const licensor = new LICMOD();
+
 const ACCOUNTMOD = require('./accounts.js');
 const accounts = new ACCOUNTMOD();
 
@@ -57,18 +60,19 @@ class Payments {
         }
 
         // cut a license
-        var newLicenseToken = 'test license key string';
-        var newLicenseEntry = { txn: txn_id, token: newLicenseToken };
+        licensor.createLicenseToken(name,email,new Date().toUTCString(), function(err,licenseToken) {
+          var newLicenseEntry = { txn: txn_id, token: licenseToken };
 
-        // and store it in the account record for the user
-        accounts.addLicenseToAccount(account, JSON.stringify(newLicenseEntry), function(err,result) {
-          if ( err ) {
-            console.log("error adding new license key: "+err);
-            return callback(err);
-          }
+          // and store it in the account record for the user
+          accounts.addLicenseToAccount(account, JSON.stringify(newLicenseEntry), function(err,result) {
+            if ( err ) {
+              console.log("error adding new license key: "+err);
+              return callback(err);
+            }
 
-          console.log("new license key added successfully");
-          return callback(null,result);
+            console.log("new license key added successfully");
+            return callback(null,result);
+          });
         });
       });
     });

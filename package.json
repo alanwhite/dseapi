@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "crypto": "0.0.3",
     "jsonwebtoken": "^7.3.0",
     "qs": "^6.4.0",
     "request": "^2.81.0",
