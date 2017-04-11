@@ -15,7 +15,7 @@ class Validator {
         console.log('Validator.forUser: bad jwt supplied');
         return callback(err);
       } else {
-        const tokenValidatedID = decoded.sub.substring(6);
+        const tokenValidatedID = decoded.sub;
         if ( user != tokenValidatedID ) {
           console.log('Validator.forUser: requested '+user+' does not match login user '+tokenValidatedID);
           return callback(new Error('User not authorized to access this resource'));

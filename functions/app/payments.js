@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 // TODO: abstract away the database provider with plugin
+// TODO: move to a request queue processing approach to allow for transient failures
 
 const qs = require('qs');
 
@@ -35,8 +36,12 @@ class Payments {
       }
 
       // check we've not already processed this transaction
-      var txn_id = data['txn_id'];
-      var account = data['custom'];
+      const txn_id = data['txn_id'];
+      const account = data['custom'];
+      const first_name = data['first_name'] || ' ';
+      const last_name = data['last_name'] || ' ';
+      const user_name = first_name + ' ' + last_name;
+      const user_email = data['payer_email'];
 
       accounts.getLicensesForAccount(account, function(err,licenses) {
         if ( err ) {
@@ -60,7 +65,7 @@ class Payments {
         }
 
         // cut a license
-        licensor.createLicenseToken(name,email,new Date().toUTCString(), function(err,licenseToken) {
+        licensor.createLicenseToken(user_name,user_email,new Date().toUTCString(), function(err,licenseToken) {
           var newLicenseEntry = { txn: txn_id, token: licenseToken };
 
           // and store it in the account record for the user

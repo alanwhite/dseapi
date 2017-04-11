@@ -21,8 +21,9 @@ module.exports.get = (event, context, callback) => {
   if (event.headers.Authorization) {
     // remove "bearer " from token
     const token = event.headers.Authorization.substring(7);
+    const account = decodeURI(event.pathParameters.id);
 
-    validateRequest.forUser(token,event.pathParameters.id, (err, data) => {
+    validateRequest.forUser(token,account, (err, data) => {
       if (err) {
         response.statusCode = 403;
         response.body = JSON.stringify({
@@ -33,7 +34,7 @@ module.exports.get = (event, context, callback) => {
         return callback(null, response);
       } else {
 
-        accounts.getLicensesForAccount(event.pathParameters.id, (err, data) => {
+        accounts.getLicensesForAccount(account, (err, data) => {
           if (err) {
             response.statusCode = 500;
             response.body = JSON.stringify({

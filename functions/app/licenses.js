@@ -1,10 +1,11 @@
+
 const pbewithmd5anddes = require("./pbewithmd5anddes.js");
 
 class Licenses {
 
-  constructor(licenseKey, saltKey) {
-    this.password = licenseKey || process.env.LICENSE_KEY;
-    this.salt = saltKey || process.env.LICENSE_SALT;
+  constructor() {
+    this.password = process.env.LICENSE_KEY;
+    this.salt = process.env.LICENSE_SALT;
   }
 
   createLicenseToken(name,email,when,callback) {
