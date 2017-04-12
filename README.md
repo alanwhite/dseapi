@@ -26,8 +26,8 @@ Various other standard files and folders have their usual meaning, e.g. node_mod
 
 ## Functionality
 
-Payments - validates an IPN from PayPal, logs it, cuts a license and stores it in the users SimpleDB entry.
-Licenses - provides front end access to a users licenses
+* Payments - validates an IPN from PayPal, logs it, cuts a license and stores it in the users SimpleDB entry.
+* Licenses - provides front end access to a users licenses.
 
 ## Contact
 
