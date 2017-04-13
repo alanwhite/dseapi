@@ -35,8 +35,6 @@ class Accounts {
           license.token = data.Attributes[i].Value;
           payload.licenses.push(license);
         }
-        
-        console.log(payload);
 
         return callback(null, JSON.stringify(payload));
       }

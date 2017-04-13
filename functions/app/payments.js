@@ -20,8 +20,6 @@ class Payments {
   }
 
   processVerifiedIPN(ipn, callback) {
-    console.log("processing validated IPN");
-    console.log('Printing all key-value pairs...');
 
     const data = qs.parse(ipn);
 
@@ -32,7 +30,6 @@ class Payments {
       if ( data['payment_status'] != 'Completed' ) {
         console.log("not processing incomplete payment with status: "+data['payment_status']);
         return callback(null,"");
-        console.log("TEST: should never see this message");
       }
 
       // check we've not already processed this transaction
@@ -49,8 +46,6 @@ class Payments {
           return callback(err);
         }
 
-        console.log("retrieved licenses "+licenses);
-
         for (var i in licenses.licenses ) {
           if ( txn == licenses[i].txn ) {
             console.log("error processing IPN, license already cut for this transaction");
@@ -65,7 +60,7 @@ class Payments {
         }
 
         // cut a license
-        licensor.createLicenseToken(user_name,user_email,new Date().toUTCString(), function(err,licenseToken) {
+        licensor.createLicenseToken(user_name,user_email,'"' + new Date().toUTCString() + '"', function(err,licenseToken) {
           var newLicenseEntry = { txn: txn_id, token: licenseToken };
 
           // and store it in the account record for the user
