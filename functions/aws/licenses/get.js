@@ -14,7 +14,8 @@ module.exports.get = (event, context, callback) => {
   // desired outcome template
   const response = {
     statusCode: 200,
-    headers: { "Access-Control-Allow-Origin" : "*" },
+    headers: { "Access-Control-Allow-Origin" : "*",
+      "Access-Control-Allow-Credentials" : true },
     body: JSON.stringify({message: 'code pass through error'})
   };
 
