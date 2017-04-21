@@ -13,6 +13,7 @@
     "jsonwebtoken": "^7.3.0",
     "qs": "^6.4.0",
     "request": "^2.81.0",
-    "serverless-secrets-plugin": "0.0.1"
+    "serverless-secrets-plugin": "0.0.1",
+    "twilio": "^2.11.1"
   }
 }

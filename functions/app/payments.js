@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 // TODO: abstract away the database provider with plugin
+// TODO: find a way to abstract away publishing an AWS SNS message
 // TODO: move to a request queue processing approach to allow for transient failures
 
 const qs = require('qs');
@@ -10,13 +11,13 @@ const licensor = new LICMOD();
 const ACCOUNTMOD = require('./accounts.js');
 const accounts = new ACCOUNTMOD();
 
-
 const PAYMENT_LOG = process.env.PAYMENT_LOG;
 // TODO: check all providers can support environment variable
 
 class Payments {
   constructor() {
     this.simpledb = new AWS.SimpleDB();
+    this.sns = new AWS.SNS({region:'eu-west-1'});
   }
 
   processVerifiedIPN(ipn, callback) {
@@ -24,7 +25,7 @@ class Payments {
     const data = qs.parse(ipn);
 
     // first just capture we've received a verified IPN
-    this.createPaymentLogEntry(ipn, function(err) {
+    this.createPaymentLogEntry(ipn, (err) => {
       if ( err ) return callback(err,"issue logging payment message");
 
       if ( data['payment_status'] != 'Completed' ) {
@@ -40,7 +41,7 @@ class Payments {
       const user_name = first_name + ' ' + last_name;
       const user_email = data['payer_email'];
 
-      accounts.getLicensesForAccount(account, function(err,licenses) {
+      accounts.getLicensesForAccount(account, (err,licenses) => {
         if ( err ) {
           console.log("error retrieving licenses for ipn check");
           return callback(err);
@@ -58,6 +59,9 @@ class Payments {
           console.log("someone trying to pay non-std price");
           return callback(null,"");
         }
+
+        // async send the purchase text
+        this.sendPurchaseNotification("Drum Score Editor received a payment from "+user_name+", "+user_email);
 
         // cut a license
         licensor.createLicenseToken(user_name,user_email,'"' + new Date().toUTCString() + '"', function(err,licenseToken) {
@@ -101,6 +105,19 @@ class Payments {
       return callback(null);
     });
 
+  }
+
+  sendPurchaseNotification(msg) {
+    const params = {
+      Message: msg,
+      TopicArn: 'arn:aws:sns:eu-west-1:248211596106:notifyPurchase', // yeah TODO: find a way to obtain aws id
+    };
+
+    this.sns.publish(params, function(error) {
+      if (error) {
+        console.log(error);
+      }
+    });
   }
 
 }

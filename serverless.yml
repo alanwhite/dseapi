@@ -28,6 +28,10 @@ provider:
         - 'sdb:GetAttributes'
         - 'sdb:PutAttributes'
       Resource: "arn:aws:sdb:${self:provider.region}:*:domain/${self:provider.environment.PAYMENT_LOG}"
+    - Effect: "Allow"
+      Resource: "*"
+      Action:
+        - "sns:*"
 
 custom:
   secrets: ${file(secrets.${opt:stage, self:provider.stage}.yml)}
@@ -59,3 +63,13 @@ functions:
           path: payments/paypal
           method: post
           cors: true
+  sms:
+    handler: functions/aws/sns/notifyPurchase.notifyPurchase
+    memorySize: 128
+    environment:
+      TWILIO_ACCOUNT_SID : ${self:custom.secrets.TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN : ${self:custom.secrets.TWILIO_AUTH_TOKEN}
+      TWILIO_PHONE_NUMBER : ${self:custom.secrets.TWILIO_PHONE_NUMBER}
+      PURCHASE_PHONE : ${self:custom.secrets.PURCHASE_PHONE}
+    events:
+      - sns: notifyPurchase
