@@ -12,6 +12,7 @@ const ACCOUNTMOD = require('./accounts.js');
 const accounts = new ACCOUNTMOD();
 
 const PAYMENT_LOG = process.env.PAYMENT_LOG;
+const PURCHASE_EVENT = process.env.PURCHASE_EVENT;
 // TODO: check all providers can support environment variable
 
 class Payments {
@@ -110,7 +111,7 @@ class Payments {
   sendPurchaseNotification(msg) {
     const params = {
       Message: msg,
-      TopicArn: 'arn:aws:sns:eu-west-1:248211596106:notifyPurchase', // yeah TODO: find a way to obtain aws id
+      TopicArn: 'arn:aws:sns:eu-west-1:248211596106:'+PURCHASE_EVENT, // yeah TODO: find a way to obtain aws id
     };
 
     this.sns.publish(params, function(error) {

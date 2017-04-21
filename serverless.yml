@@ -71,5 +71,6 @@ functions:
       TWILIO_AUTH_TOKEN : ${self:custom.secrets.TWILIO_AUTH_TOKEN}
       TWILIO_PHONE_NUMBER : ${self:custom.secrets.TWILIO_PHONE_NUMBER}
       PURCHASE_PHONE : ${self:custom.secrets.PURCHASE_PHONE}
+      PURCHASE_EVENT : notifyPurchase-${opt:stage, self:provider.stage}
     events:
-      - sns: notifyPurchase
+      - sns: notifyPurchase-${opt:stage, self:provider.stage}
