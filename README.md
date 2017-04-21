@@ -14,9 +14,11 @@ Please feel free to contribute to the code, or provide me with feedback to help 
     * payments.js - processes the payments workflow from a validated PayPal notification
     * pbewithmd5anddes.js - implements the rather old and relatively insecure Java encryption mechanism to create the encrypted license. The main Drum Score Editor software decrypts the token this produces as proof of license. Gloriously bypassed these days, and a new mechanism is required!
     * validator.js - ensures that the JWT coming from the front end is valid
+    * notifier.js - uses Twilio to SMS me when anyone buys a license
   * aws - contains the functions specific to handling the AWS Lambda interface, the thinking is that other providers 'glue' layer between the actual app and the provider's proprietary interfaces will live in different folders
-    * licenses - contains the handler for the /${stage}/licenses/ GET endpoint
-    * payments - contains the handler for the /${stage}/payments/paypal POST endpoint
+    * licenses - contains the handler for the http /${stage}/licenses/ GET endpoint
+    * payments - contains the handler for the http /${stage}/payments/paypal POST endpoint
+    * sns - contains the handler for an incoming AWS SNS message and routes to notifier.js in the app
 
 * serverless.yml - configuration file for sls to manage the AWS Cloudformation template and deploy the site to AWS S3 & Lambda & HTTP API Gateway
 
@@ -26,7 +28,7 @@ Various other standard files and folders have their usual meaning, e.g. node_mod
 
 ## Functionality
 
-* Payments - validates an IPN from PayPal, logs it, cuts a license and stores it in the users SimpleDB entry.
+* Payments - validates an IPN from PayPal, logs it, cuts a license and stores it in the users SimpleDB entry, and sends me an SMS text so I know someone has spent money with us.
 * Licenses - provides front end access to a users licenses.
 
 ## Contact
