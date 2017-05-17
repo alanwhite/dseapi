@@ -1,4 +1,5 @@
 'use strict';
+const PAYPAL_HOST = process.env.PAYPAL_HOST;
 
 const qs = require('qs');
 const request = require('request');
@@ -20,7 +21,7 @@ module.exports.post = (event, context, callback) => {
   console.log(body);
 
   var options = {
-      url: 'https://www.sandbox.paypal.com/cgi-bin/webscr',
+      url: PAYPAL_HOST,
       method: 'POST',
       headers: {
           'Connection': 'close'
