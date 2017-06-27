@@ -55,6 +55,7 @@ module.exports.post = (event, context, callback) => {
       } else if (body.substring(0, 7) === 'INVALID') {
 
         //The IPN invalid
+        console.log(body);
         console.log('Invalid IPN!');
       } else {
 
