@@ -60,6 +60,7 @@ functions:
       LICENSE_KEY : ${self:custom.secrets.LICENSE_KEY}
       LICENSE_SALT : ${self:custom.secrets.LICENSE_SALT}
       PAYPAL_HOST : ${self:custom.secrets.PAYPAL_HOST}
+      PURCHASE_EVENT : notifyPurchase-${opt:stage, self:provider.stage}
     events:
       - http:
           path: payments/paypal
