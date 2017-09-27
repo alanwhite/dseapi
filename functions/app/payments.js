@@ -84,27 +84,27 @@ class Payments {
   }
 
   createPaymentLogEntry(ipn, callback) {
+    console.log(ipn)
+    // var params = {
+    //  DomainName: PAYMENT_LOG,
+    //  ItemName: Date.now().toString(),
+    //   Attributes: [
+    //   {
+    //     Name: 'ipn',
+    //     Value: ipn, /* required */
+    //     Replace: false
+    //   }]
+    // };
 
-    var params = {
-      DomainName: PAYMENT_LOG,
-      ItemName: Date.now().toString(),
-      Attributes: [
-      {
-        Name: 'ipn',
-        Value: ipn, /* required */
-        Replace: false
-      }]
-    };
+    // this.simpledb.putAttributes(params, function(err, data) {
+    //   if (err) {
+    //     console.log(err, err.stack);
+    //     return callback(err);
+    //   }
 
-    this.simpledb.putAttributes(params, function(err, data) {
-      if (err) {
-        console.log(err, err.stack);
-        return callback(err);
-      }
-
-      console.log(data);
+    //  console.log(data);
       return callback(null);
-    });
+    // });
 
   }
 
